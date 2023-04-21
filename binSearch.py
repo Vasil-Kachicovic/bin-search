@@ -1,5 +1,6 @@
 import sys
 import os.path
+# import io
 
 
 def get_full_path(path):
@@ -21,6 +22,17 @@ def open_file_for_reading(file_path):
     try:
         return open(file_path, "rt")
     except OSError:
+        file_error(file_path)
+
+
+def seek_half_of_file_and_print_next_line(file_path):
+    if file_exists(file_path) == True:
+        file = open_file_for_reading(file_path)
+        file.seek(get_file_size(file_path) // 2)
+        file.readline()
+        print(file.readline(), end="")
+        file.close()
+    else:
         file_error(file_path)
 
 
@@ -49,8 +61,17 @@ if __name__ == '__main__':
     path_from_cl = sys.argv[1]
     file_path = get_full_path(path_from_cl)
 
-    if file_exists(file_path) == False:
-        file_size = get_file_size(file_path)
-        print(f"File {path_from_cl} exists and has {file_size} bytes")
-    else:
-        file_error(path_from_cl)
+    seek_half_of_file_and_print_next_line(file_path)
+
+    # if file_exists(file_path) == True:
+    #     file_size = get_file_size(file_path)
+    #     # print(f"File {path_from_cl} exists and has {file_size} bytes")
+    #     opened_file = open_file_for_reading(file_path)
+    #     half = file_size // 2
+    #     print(half)
+    #     print(opened_file.seek(half))
+    #     print(opened_file.readline(), end="")
+    #     print(opened_file.tell())
+    #     opened_file.close()
+    # else:
+    #     file_error(path_from_cl)
