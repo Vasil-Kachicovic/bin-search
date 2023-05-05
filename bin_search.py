@@ -7,13 +7,14 @@ class BinSearch:
     def __init__(self, path):
         self.short_path = path
         self.long_path = self._get_full_path()
-        self.file_size = self._get_file_size()
 
-        if self._file_exists:
+        if self._file_exists():
+            self.file_size = self._get_file_size()
             self.file = self._create_file_object()
         else:
             self.file = None
             print("File does not exist!")
+            sys.exit(-1)
 
     def _get_full_path(self):
         return os.path.abspath(self.short_path)
@@ -25,13 +26,15 @@ class BinSearch:
         try:
             return os.path.getsize(self.long_path)
         except OSError:
-            pass
+            print("OSError")
+            sys.exit(-1)
 
     def _create_file_object(self):
         try:
             return open(self.long_path, "rt")
         except OSError:
-            pass
+            print("OSError")
+            sys.exit(-1)
 
     def close_file(self):
         '''If the file is open, close it.'''
@@ -81,15 +84,11 @@ class BinSearch:
         limit_gap = upper_limit - lower_limit
         middle = upper_limit // 2
 
-        test = 0  # dbg
-
         while limit_gap > 0:
             line, line_start = self.read_next_line_from(middle)
             fields = self.split_line(line, separator)
-            test += 1  # dbg
 
             if fields[field] == pattern:
-                print(test)  # dbg
                 return line, line_start
             elif fields[field] > pattern:
                 upper_limit = line_start
@@ -106,9 +105,9 @@ class BinSearch:
 
 # testing script
 if __name__ == "__main__":
-    f = BinSearch("/home/vasil/dict-english")
+    f = BinSearch("sorter-output")
     # print(f.read_next_line_from(f.file_size // 2))
-    result = f.find_exact("AAA")
+    result = f.find_exact(sys.argv[1])
     print(result[0], end='')
     print(result[1])
 
